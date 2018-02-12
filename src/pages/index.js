@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
 import Storage from '../storage';
+import Perform from '../perform';
 
 class Index extends Component {
   constructor(props) {
@@ -11,6 +12,8 @@ class Index extends Component {
     this.handlePoemChange = this.handlePoemChange.bind(this);
     this.handlePoemTitleChange = this.handlePoemTitleChange.bind(this);
     this.handleSavePoem = this.handleSavePoem.bind(this);
+    this.handlePlayPoem = this.handlePlayPoem.bind(this);
+    this.handleStopPoem = this.handleStopPoem.bind(this);
     this.poemTemplate = {
       title: '',
       text: ''
@@ -28,6 +31,7 @@ class Index extends Component {
     }else{
       this.state = Object.assign({},this.stateTemplate);
     }
+    Perform.initialize();
   }
   loadData(){
     // load any stored poems
@@ -54,6 +58,12 @@ class Index extends Component {
     Storage.setData('storedState',this.state);
     Storage.store();
   }
+  handlePlayPoem(value){
+    Perform.play(this.state.currentPoem.text);
+  }
+  handleStopPoem(value){
+    Perform.stop();
+  }
   render() {
     return (
       <div className="App">
@@ -75,6 +85,14 @@ class Index extends Component {
         label="Save Poem"
         value="save"
         handleClick={this.handleSavePoem}></Button>
+      <Button
+        label="Play Poem"
+        value="play"
+        handleClick={this.handlePlayPoem}></Button>
+      <Button
+        label="Stop Playback"
+        value="stop"
+        handleClick={this.handleStopPoem}></Button>
       </div>
     );
   }
