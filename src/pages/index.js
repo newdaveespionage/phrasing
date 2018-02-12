@@ -9,25 +9,50 @@ class Index extends Component {
   constructor(props) {
     super(props);
     this.handlePoemChange = this.handlePoemChange.bind(this);
+    this.handlePoemTitleChange = this.handlePoemTitleChange.bind(this);
     this.handleSavePoem = this.handleSavePoem.bind(this);
-    this.state = {
-      poems: [''],
+    this.poemTemplate = {
+      title: '',
+      text: ''
+    }
+    this.stateTemplate = {
+      poems: [],
+      currentPoemIndex: 0,
+      currentPoem: Object.assign({},this.poemTemplate)
     };
-    let poems = this.loadPoems();
-    if(poems){
-      this.setState('poems',poems);
+    Storage.initialize('phrasingData');
+    let data = this.loadData();
+    if(data){
+      //TODO: inegrity checks of stored state?
+      this.state = Object.assign({},this.stateTemplate,data);
+    }else{
+      this.state = Object.assign({},this.stateTemplate);
     }
   }
-  loadPoems(){
-    return storage.getData('poems');
+  loadData(){
+    // load any stored poems
+    return Storage.getData('storedState');
+  }
+  handlePoemTitleChange(title){
+    // update the currentPoem state
+    let poemState = Object.assign({}, this.state.currentPoem, {title:title});
+    this.setState({currentPoem: poemState});
   }
   handlePoemChange(poem){
-    this.setState({poem: poem});
+    // update the currentPoem state
+    let poemState = Object.assign({}, this.state.currentPoem, {text:poem});
+    this.setState({currentPoem: poemState});
   }
   handleSavePoem(value){
-    console.log('handleSavePoem',value,this.state.poems);
-    storage.setData('poems',this.state.poems);
-    storage.store();
+    // update current poem based on state
+    let poemState = this.state.poems.slice(0);
+    let currentPoem = Object.assign({},this.state.currentPoem);
+    poemState[this.state.currentPoemIndex] = currentPoem;
+    this.setState({poems:poemState});
+
+    // save all poems
+    Storage.setData('storedState',this.state);
+    Storage.store();
   }
   render() {
     return (
@@ -35,11 +60,16 @@ class Index extends Component {
         <Header text="Phrasing: Words Made Sound" type="H1" />
         <TextField
           id="textarea"
+          label="Title"
+          placeholder="Title"
+          value={this.state.currentPoem.title}
+          onChange={this.handlePoemTitleChange}></TextField>
+        <TextField
+          id="textarea"
           label="Words"
           placeholder="Words go Here"
           multiline
-          margin="normal"
-          value={this.state.poems[0]}
+          value={this.state.currentPoem.text}
           onChange={this.handlePoemChange}></TextField>
       <Button
         label="Save Poem"

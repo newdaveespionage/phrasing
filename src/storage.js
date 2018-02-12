@@ -1,4 +1,3 @@
-'use strict';
 const Storage = {
   initialize(key = 'phrasingData') {
     this.key = key;
@@ -8,18 +7,18 @@ const Storage = {
     } else {
       this.data = JSON.parse(this.data);
     }
-  }
+  },
   getData(key) {
     return this.data[key] || false;
-  }
+  },
   setData(key, value) {
     this.data[key] = value;
-  }
+  },
   store() {
     if (!this.data) {
       this.initialize();
     }
-    window.localStorage.setItem(this.key, JSON.serialize(this.data));
+    window.localStorage.setItem(this.key, JSON.stringify(this.data));
   }
 }
 
