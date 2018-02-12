@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import textarea from './textarea';
-import input from './input';
 import './TextField.css';
 
 class TextField extends Component {
