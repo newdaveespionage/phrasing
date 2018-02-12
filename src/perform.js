@@ -10,21 +10,25 @@ const Perform = {
   convertToNotes(letters) {
     // figure out note from letter, duration from word length.
     letters.replace(/[\n]/g, '<br/>')
+    const now = Tone.now()
     let phrases = letters.split('<br/>');
     let arrangement = [];
-    let rests = 0;
-    phrases.forEach(function(phrase, index) {
+    let lineRests = 0;
+    phrases.forEach((phrase, index) => {
       let currentPhrase = phrase.split(' ');
-      currentPhrase.forEach(function(word, wordIndex) {
+      let rests = 0;
+      currentPhrase.forEach((word, wordIndex) => {
+        let baseDuration = now + lineRests + rests;
+        lineRests = 0
         let noteDefinition = {
-          duration: word.length + 'n',
-          timing: index + wordIndex + rests,
-          note: word.charCodeAt(0) * 100
+          duration: word.length,
+          timing: baseDuration + index + wordIndex,
+          note: word.charCodeAt(0) * 10
         };
         arrangement.push(noteDefinition);
-        rests++;
+        rests = 1;
       });
-      rests++;
+      lineRests = 1;
     });
     return arrangement;
   },
@@ -33,7 +37,7 @@ const Perform = {
     var that = this;
     let arrangement = this.convertToNotes(letters);
     if (arrangement.length) {
-      arrangement.forEach(function(noteDefinition, index) {
+      arrangement.forEach((noteDefinition, index) => {
         that.synth.triggerAttackRelease(noteDefinition.note, noteDefinition.duration, noteDefinition.timing);
       });
     }
