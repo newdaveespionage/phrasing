@@ -1,0 +1,7 @@
+.TextField {
+  margin: 1em;
+  padding: 1em;
+}
+.TextField .TextFieldEntry{
+  width:100%;
+}
