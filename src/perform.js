@@ -1,15 +1,15 @@
 // manage one or more oscillators, their tuning, and starting and stopping their sound
-import Tone from "tone";
+import * as Tone from "tone";
 
 const Perform = {
   initialize() {
     console.log("Perform:initialize");
     this.isPlaying = false;
     const widener = new Tone.StereoWidener(0.8);
-    const pingpong = new Tone.PingPongDelay("8t", 0.8).toMaster();
-    this.synth = new Tone.PolySynth(4, Tone.Synth)
+    const pingpong = new Tone.PingPongDelay("8t", 0.8).toDestination();
+    this.synth = new Tone.PolySynth(Tone.Synth)
       .connect(pingpong)
-      .chain(widener, Tone.Master);
+      .chain(widener, Tone.getDestination());
     this.synth.set({
       volume: -10,
       envelope: { attack: 0.3, sustain: 0.2, release: 0.2 }
