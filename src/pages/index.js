@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import PropTypes from 'prop-types';
 import Header from '../components/Header';
 import TextField from '../components/TextField';
 import Button from '../components/Button';
@@ -48,15 +47,13 @@ class Index extends Component {
     this.setState({currentPoem: poemState});
   }
   handleSavePoem(value){
-    // update current poem based on state
     let poemState = this.state.poems.slice(0);
     let currentPoem = Object.assign({},this.state.currentPoem);
     poemState[this.state.currentPoemIndex] = currentPoem;
-    this.setState({poems:poemState});
-
-    // save all poems
-    Storage.setData('storedState',this.state);
-    Storage.store();
+    this.setState({poems:poemState}, () => {
+      Storage.setData('storedState', this.state);
+      Storage.store();
+    });
   }
   handlePlayPoem(value){
     Perform.play(this.state.currentPoem.text);
@@ -69,13 +66,13 @@ class Index extends Component {
       <div className="App">
         <Header text="Phrasing: Words Made Sound" type="H1" />
         <TextField
-          id="textarea"
+          id="poem-title"
           label="Title"
           placeholder="Title"
           value={this.state.currentPoem.title}
           onChange={this.handlePoemTitleChange}></TextField>
         <TextField
-          id="textarea"
+          id="poem-text"
           label="Words"
           placeholder="Words go Here"
           multiline
@@ -97,9 +94,5 @@ class Index extends Component {
     );
   }
 }
-
-Index.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default Index;

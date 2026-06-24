@@ -17,7 +17,7 @@ const Perform = {
   },
   convertToNotes(letters) {
     // figure out note from letter, duration from word length.
-    letters.replace(/[\n]/g, "<br/>");
+    letters = letters.replace(/[\n]/g, "<br/>");
     const now = Tone.now();
     let phrases = letters.split("<br/>");
     let arrangement = [];
@@ -48,11 +48,12 @@ const Perform = {
   },
   play(letters) {
     console.log("Perform:play", letters);
+    if (this.isPlaying) this.stop();
     var that = this;
     let arrangement = this.convertToNotes(letters);
     console.log("Perform:play arrangement", arrangement);
     if (arrangement.length) {
-      arrangement.forEach((noteDefinition, index) => {
+      arrangement.forEach((noteDefinition) => {
         that.synth.triggerAttackRelease(
           noteDefinition.note,
           noteDefinition.duration,
@@ -65,7 +66,9 @@ const Perform = {
   },
   stop() {
     console.log("Perform:stop");
-    this.synth.triggerRelease();
+    this.synth.releaseAll();
+    this.synth.disconnect();
+    this.initialize();
     this.isPlaying = false;
   }
 };

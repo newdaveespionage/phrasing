@@ -3,9 +3,13 @@ const Storage = {
     this.key = key;
     this.data = window.localStorage.getItem(key);
     if (!this.data) {
-      this.data = {}
+      this.data = {};
     } else {
-      this.data = JSON.parse(this.data);
+      try {
+        this.data = JSON.parse(this.data);
+      } catch {
+        this.data = {};
+      }
     }
   },
   getData(key) {
