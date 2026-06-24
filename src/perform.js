@@ -31,9 +31,9 @@ const Perform = {
         let baseDuration = now + lineRests + rests;
         lineRests = 0;
         let noteDefinition = {
-          duration: word.length - 0.5,
+          duration: word.length * 0.5,
           timing: baseDuration + index + wordIndex,
-          note: word.charCodeAt(0) * 10
+          note: word.charCodeAt(0) * 5
         };
         arrangement.push(noteDefinition);
         // add a breath
