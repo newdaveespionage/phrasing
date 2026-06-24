@@ -12,6 +12,7 @@ class TextField extends Component {
   renderTextArea(props) {
     return <div className="TextField">
       <textarea
+        id={props.id}
         name={props.name}
         placeholder={props.placeholder}
         className="TextFieldEntry"
@@ -22,6 +23,7 @@ class TextField extends Component {
   renderInput(props) {
     return <div className="TextField">
       <input
+        id={props.id}
         name={props.name}
         type="text"
         placeholder={props.placeholder}

@@ -23,9 +23,11 @@ const Perform = {
     let arrangement = [];
     let lineRests = 0;
     phrases.forEach((phrase, index) => {
+      if (!phrase) return;
       let currentPhrase = phrase.split(" ");
       let rests = 0;
       currentPhrase.forEach((word, wordIndex) => {
+        if (!word) return;
         let baseDuration = now + lineRests + rests;
         lineRests = 0;
         let noteDefinition = {
