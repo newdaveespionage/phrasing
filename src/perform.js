@@ -1,15 +1,15 @@
 // manage one or more oscillators, their tuning, and starting and stopping their sound
-import Tone from "tone";
+import * as Tone from "tone";
 
 const Perform = {
   initialize() {
     console.log("Perform:initialize");
     this.isPlaying = false;
     const widener = new Tone.StereoWidener(0.8);
-    const pingpong = new Tone.PingPongDelay("8t", 0.8).toMaster();
-    this.synth = new Tone.PolySynth(4, Tone.Synth)
+    const pingpong = new Tone.PingPongDelay("8t", 0.8).toDestination();
+    this.synth = new Tone.PolySynth(Tone.Synth)
       .connect(pingpong)
-      .chain(widener, Tone.Master);
+      .chain(widener, Tone.getDestination());
     this.synth.set({
       volume: -10,
       envelope: { attack: 0.3, sustain: 0.2, release: 0.2 }
@@ -17,15 +17,17 @@ const Perform = {
   },
   convertToNotes(letters) {
     // figure out note from letter, duration from word length.
-    letters.replace(/[\n]/g, "<br/>");
+    letters = letters.replace(/[\n]/g, "<br/>");
     const now = Tone.now();
     let phrases = letters.split("<br/>");
     let arrangement = [];
     let lineRests = 0;
     phrases.forEach((phrase, index) => {
+      if (!phrase) return;
       let currentPhrase = phrase.split(" ");
       let rests = 0;
       currentPhrase.forEach((word, wordIndex) => {
+        if (!word) return;
         let baseDuration = now + lineRests + rests;
         lineRests = 0;
         let noteDefinition = {
@@ -48,11 +50,12 @@ const Perform = {
   },
   play(letters) {
     console.log("Perform:play", letters);
+    if (this.isPlaying) this.stop();
     var that = this;
     let arrangement = this.convertToNotes(letters);
     console.log("Perform:play arrangement", arrangement);
     if (arrangement.length) {
-      arrangement.forEach((noteDefinition, index) => {
+      arrangement.forEach((noteDefinition) => {
         that.synth.triggerAttackRelease(
           noteDefinition.note,
           noteDefinition.duration,
@@ -65,7 +68,9 @@ const Perform = {
   },
   stop() {
     console.log("Perform:stop");
-    this.synth.triggerRelease();
+    this.synth.releaseAll();
+    this.synth.disconnect();
+    this.initialize();
     this.isPlaying = false;
   }
 };
